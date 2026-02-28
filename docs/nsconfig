@@ -1,0 +1,3 @@
+<Files *>
+AddType exp="*.xls" type=application/x-xls
+</Files>
