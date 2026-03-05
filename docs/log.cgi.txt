@@ -1,29 +1,29 @@
 #!/usr/mesh/bin/perl
-#��L�́A�T�|�o�|�̃p�X�ɂ��킹��B
+#上記は、サ－バ－のパスにあわせる。
 #####################################################################
 #Log CGI
 #Copyright (c) 1996/1997         K.Yamano 
-#CGI�̔̔��A�]�ځA�z�z���ցB
-############################# �����ݒ藓 ###########################
+#CGIの販売、転載、配布厳禁。
+############################# 初期設定欄 ###########################
 
-#gif�摜�܂ł̃p�X���L��
+#gif画像までのパスを記入
 $gif = './log.gif';
 
-#���[�U�[�p�L�^�t�@�C��(xx.txt)��u���t�H���_�[�܂ł̃p�X���L��
-#cgi�t�@�C�����u���Ă���t�H���_�[���ɂ́Axx.txt�͒u���Ȃ��ŉ������ilog.cgi�͕ʂɃt�H���_�[���쐬���u���ĉ������j
-#���݁A�t�H���_�[���� cgi-bin �ɂȂ��Ă��܂��B
-#�Ⴆ�΁Acgi-bin����xxx�t�H���_�[���ɒu�����́A../cgi-bin/xxx �ƋL���B
+#ユーザー用記録ファイル(xx.txt)を置くフォルダーまでのパスを記入
+#cgiファイルが置いてあるフォルダー内には、xx.txtは置かないで下さい（log.cgiは別にフォルダーを作成し置いて下さい）
+#現在、フォルダー名が cgi-bin になっています。
+#例えば、cgi-bin下のxxxフォルダー内に置く時は、../cgi-bin/xxx と記入。
 $mkbo = '../cgi-bin';
 
-#CGI����p�F�؃L�[���L���i���p�p�����j
-$key = 'abc';   #�i�����Aabc�ɐݒ�j
+#CGI動作用認証キーを記入（半角英数字）
+$key = 'abc';   #（只今、abcに設定）
 
-#�{���p�F�؃L�[���L���i���p�p�����j
-$key2 = 'abc';   #�i�����Aabc�ɐݒ�j
+#閲覧用認証キーを記入（半角英数字）
+$key2 = 'abc';   #（只今、abcに設定）
 
-#�Ƃ肠����10�y�[�W�����L�ɏ����Ă��܂����������ɒǉ��ł��܂��B
-#���L��xxxx �����͉��L10�܂ŋL�����Ă���̂�11����ǋL���Ă��������B
-#$FORMA{'xxxx'} = '�f�[�^�[���L�^��������html�t�@�C���܂ł�URL���L��';
+#とりあえず10ページ分下記に書いていますが無制限に追加できます。
+#下記のxxxx 部分は下記10まで記入しているので11から追記してください。
+#$FORMA{'xxxx'} = 'データーを記録させたいhtmlファイルまでのURLを記入';
 
 $FORMA{'1'} = 'http://www2a.meshnet.or.jp/~yama/';
 
@@ -45,54 +45,54 @@ $FORMA{'9'} = 'http://www.xxx.or.jp/~xxxx/xxxx/index.html';
 
 $FORMA{'10'} = 'http://www.xxx.or.jp/~xxxx/xxxx/index.html';
 
-####   �ݒu���@   ####
-#log.cgi.txt��log.cgi�ɕύX�B
+####   設置方法   ####
+#log.cgi.txtをlog.cgiに変更。
 
-#�Ⴆ�΁A��L xxxx ������1�̏ꍇ�́A
-#�P�A1.txt�t�@�C�����쐬����i1�y�[�W���́A1.txt �Ƀf�[�^�[���L�^�����B2�y�[�W����2.txt�ɋL�^�A�ȉ������j
-#�Q�A�f�[�^�[���L�^��������html�t�@�C���̈�ԉ��ɉ��L�̃^�O���L�����ĉ������i���΃p�X��URL�ŋL���j
+#例えば、上記 xxxx 部分が1の場合は、
+#１、1.txtファイルを作成する（1ページ分は、1.txt にデーターが記録される。2ページ分は2.txtに記録、以下同じ）
+#２、データーを記録させたいhtmlファイルの一番下に下記のタグを記入して下さい（相対パスかURLで記入）
 #          <IMG SRC="./cgi-bin/log.cgi?a=1&k=abc>
-#1.txt�Ə�La=1�͓��������ɂȂ�܂��Bk=abc�́A$key = 'abc';�Ɠ����B
-#�ȏケ���1�y�[�W�����ݒu�����B�ȉ�������
+#1.txtと上記a=1は同じ数字になります。k=abcは、$key = 'abc';と同じ。
+#以上これで1ページ分が設置完了。以下同じく
 
-#�f�[�^�[�{���́Ahttp://www.xxx/~xxx/cgi-bin/log.cgi?k2=abc �փA�N�Z�X���ĉ������B
-#�u�b�N�}�[�N���ĉ������ik2=abc �́A$key2 = 'abc'; �Ɠ����ɂ���j
+#データー閲覧は、http://www.xxx/~xxx/cgi-bin/log.cgi?k2=abc へアクセスして下さい。
+#ブックマークして下さい（k2=abc は、$key2 = 'abc'; と同じにする）
 
-#�p�[�~�b�V�����ݒ�
+#パーミッション設定
 #log.cgi ---> 755
 #xx.txt ---> 666
-#xx.txt ���u���Ă���t�H���_�[���g��777�ɕύX
+#xx.txt が置いてあるフォルダー自身を777に変更
 
 ####################################################################
 &dec;
 &jikan;
-#########���[�U�[�{��
-if($FORM{'k2'} ne '' && $FORM{'k2'} ne $key2){$messe = "�L�[���Ⴂ�܂��m�F���ĉ�����";&keikoku;}
+#########ユーザー閲覧
+if($FORM{'k2'} ne '' && $FORM{'k2'} ne $key2){$messe = "キーが違います確認して下さい";&keikoku;}
 
 if($FORM{'k2'} eq "$key2"){
 
 -d "$mkbo" && ($c = 1);
-if($c != 1){$messe = "����$mkbo�t�H���_�[�͑��݂��܂���m�F���ĉ�����";&keikoku;}
+if($c != 1){$messe = "この$mkboフォルダーは存在しません確認して下さい";&keikoku;}
 
 print "Content-type: text/html\n\n";
 print <<HTML;
 <html><HEAD><TITLE>Log_Panel</TITLE></HEAD>
 <body bgcolor="#dab1b1" TEXT="#000000" link="#0000ff">
-<center><font size="4"><b>�e�y�[�W�̃A�N�Z�X���O�{���i�{���̃A�N�Z�X���̑���������\\�����܂��j</b></font></center><p>
-�J�E���^�F�L�^�J�n������̍��v�A900000��ɂȂ��0�Ƀ��Z�b�g����܂�<br>
-�{���F�{�������܂ł̉{����<br>
-����F����̉{����<br>
-�i�{���A����� not �ƕ\\�����鎞��48���Ԉȏ�u2���Ԉȏ�v�{������Ă��܂���j<br>
-�ŏI�A�N�Z�X���ԁF�Ō�ɉ{�����ꂽ����<br>
+<center><font size="4"><b>各ページのアクセスログ閲覧（本日のアクセス数の多い順から表\示します）</b></font></center><p>
+カウンタ：記録開始日からの合計、900000回になれば0にリセットされます<br>
+本日：本日只今までの閲覧回数<br>
+昨日：昨日の閲覧回数<br>
+（本日、昨日が not と表\示する時は48時間以上「2日間以上」閲覧されていません）<br>
+最終アクセス時間：最後に閲覧された時間<br>
 
 <p>
 <table border="1" cellspacing="1" cellpadding="1" align="center">
 <tr><th nowrap bgcolor="#00ff00">URL</th>
-<th nowrap bgcolor="#00ff00">�J�E���^</th>
-<th nowrap bgcolor="#00ff00">�ŏI�A�N�Z�X����</th>
-<th nowrap bgcolor="#00ff00">�{��</th>
-<th nowrap bgcolor="#00ff00">���</th>
-<th nowrap bgcolor="#00ff00" WIDTH=150>�O���t</th></tr>
+<th nowrap bgcolor="#00ff00">カウンタ</th>
+<th nowrap bgcolor="#00ff00">最終アクセス時間</th>
+<th nowrap bgcolor="#00ff00">本日</th>
+<th nowrap bgcolor="#00ff00">昨日</th>
+<th nowrap bgcolor="#00ff00" WIDTH=150>グラフ</th></tr>
 HTML
 
 opendir(DI,"$mkbo") || die"error\n";
@@ -103,7 +103,7 @@ foreach $lin (@fil){
 
 if($lin !~ /(.*)\.txt$/){next;}
 
-if(!open(IN,"${mkbo}/${1}.txt")){$messe = '�ǂݍ��݃t�@�C�����I�[�v���o���܂���';&keikoku;}
+if(!open(IN,"${mkbo}/${1}.txt")){$messe = '読み込みファイルをオープン出来ません';&keikoku;}
 $ti = <IN>;
 close(IN);chop($ti);
 ($counta3,$countb3,$counter,$time3,$year3,$mon3,$day3,$wday3,$hour3,$min3) = split(/\,/,$ti);
@@ -115,7 +115,7 @@ $counta1a{$1} = $counta1;
 $countb1a{$1} = $countb1;
 $countera{$1} = $counter;
 $timea{$1} = $time3;
-$days = "$mon3��$day3��($wday3)$hour3��$min3��";
+$days = "$mon3月$day3日($wday3)$hour3時$min3分";
 $daya{$1} = $days;
 
 }
@@ -149,7 +149,7 @@ $lineno++;
  }
 
 print "</table><hr noshade><h4 align=right><a href=\"http://www2a.biglobe.ne.jp/~yama/\" target=\"_top\">Log V1.0</a></h4>\n";
-print "<!--���URL�́A�폜���Ȃ��ŉ������B-->\n"; 
+print "<!--上のURLは、削除しないで下さい。-->\n"; 
 print "<p><br></body></html>\n";
 
 }elsif($FORM{'k'} eq "$key" && $FORM{'a'} ne ''){
@@ -210,7 +210,7 @@ $time = time;
 		if ($min < 10)  { $min = "0$min";}
 		if ($hour < 10) { $hour = "0$hour";}
 		if ($day < 10)  { $day = "0$day";}
-$wday = ('��','��','��','��','��','��','�y')[$wday];  
+$wday = ('日','月','火','水','木','金','土')[$wday];  
 
 }
 
