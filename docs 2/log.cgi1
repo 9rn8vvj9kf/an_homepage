@@ -1,0 +1,228 @@
+#!/usr/local/bin/perl
+#上記は、サ－バ－のパスにあわせる。
+#####################################################################
+#Log CGI
+#Copyright (c) 1996/1997         K.Yamano 
+#CGIの販売、転載、配布厳禁。
+############################# 初期設定欄 ###########################
+
+#gif画像までのパスを記入
+$gif = './log.gif';
+
+#ユーザー用記録ファイル(xx.txt)を置くフォルダーまでのパスを記入
+#cgiファイルが置いてあるフォルダー内には、xx.txtは置かないで下さい（log.cgiは別にフォルダーを作成し置いて下さい）
+#現在、フォルダー名が cgi-bin になっています。
+#例えば、cgi-bin下のxxxフォルダー内に置く時は、../cgi-bin/xxx と記入。
+$mkbo = '../cgi-bin/txt';
+
+#CGI動作用認証キーを記入（半角英数字）
+$key = 'abc';   #（只今、abcに設定）
+
+#閲覧用認証キーを記入（半角英数字）
+$key2 = 'abc';   #（只今、abcに設定）
+
+#とりあえず10ページ分下記に書いていますが無制限に追加できます。
+#下記のxxxx 部分は下記10まで記入しているので11から追記してください。
+#$FORMA{'xxxx'} = 'データーを記録させたいhtmlファイルまでのURLを記入';
+
+$FORMA{'1'} = 'http://www2.117.ne.jp/~eagle/index.html';
+
+$FORMA{'2'} = 'http://www2a.meshnet.or.jp/~yama/faq.html';
+
+$FORMA{'3'} = 'http://www2a.meshnet.or.jp/~yama/cgi.html';
+
+$FORMA{'4'} = 'http://www.xxxx.or.jp/~xxxx/xxxx/index.html';
+
+$FORMA{'5'} = 'http://www.xxx.or.jp/~xxxx/xxxx/index.html';
+
+$FORMA{'6'} = 'http://www.xxx.or.jp/~xxxx/xxxx/index.html';
+
+$FORMA{'7'} = 'http://www.xxx.or.jp/~xxxx/xxxx/index.html';
+
+$FORMA{'8'} = 'http://www.xxx.or.jp/~xxxx/xxxx/index.html';
+
+$FORMA{'9'} = 'http://www.xxx.or.jp/~xxxx/xxxx/index.html';
+
+$FORMA{'10'} = 'http://www.xxx.or.jp/~xxxx/xxxx/index.html';
+
+####   設置方法   ####
+#log.cgi.txtをlog.cgiに変更。
+
+#例えば、上記 xxxx 部分が1の場合は、
+#１、1.txtファイルを作成する（1ページ分は、1.txt にデーターが記録される。2ページ分は2.txtに記録、以下同じ）
+#２、データーを記録させたいhtmlファイルの一番下に下記のタグを記入して下さい（相対パスかURLで記入）
+#          <IMG SRC="./cgi-bin/log.cgi?a=1&k=abc>
+#1.txtと上記a=1は同じ数字になります。k=abcは、$key = 'abc';と同じ。
+#以上これで1ページ分が設置完了。以下同じく
+
+#データー閲覧は、http://www.xxx/~xxx/cgi-bin/log.cgi?k2=abc へアクセスして下さい。
+#ブックマークして下さい（k2=abc は、$key2 = 'abc'; と同じにする）
+
+#パーミッション設定
+#log.cgi ---> 755
+#xx.txt ---> 666
+#xx.txt が置いてあるフォルダー自身を777に変更
+
+####################################################################
+&dec;
+&jikan;
+#########ユーザー閲覧
+if($FORM{'k2'} ne '' && $FORM{'k2'} ne $key2){$messe = "キーが違います確認して下さい";&keikoku;}
+
+if($FORM{'k2'} eq "$key2"){
+
+-d "$mkbo" && ($c = 1);
+if($c != 1){$messe = "この$mkboフォルダーは存在しません確認して下さい";&keikoku;}
+
+print "Content-type: text/html\n\n";
+print <<HTML;
+<html><HEAD><TITLE>Log_Panel</TITLE></HEAD>
+<body bgcolor="#dab1b1" TEXT="#000000" link="#0000ff">
+<center><font size="4"><b>各ページのアクセスログ閲覧（本日のアクセス数の多い順から表\示します）</b></font></center><p>
+カウンタ：記録開始日からの合計、900000回になれば0にリセットされます<br>
+本日：本日只今までの閲覧回数<br>
+昨日：昨日の閲覧回数<br>
+（本日、昨日が not と表\示する時は48時間以上「2日間以上」閲覧されていません）<br>
+最終アクセス時間：最後に閲覧された時間<br>
+
+<p>
+<table border="1" cellspacing="1" cellpadding="1" align="center">
+<tr><th nowrap bgcolor="#00ff00">URL</th>
+<th nowrap bgcolor="#00ff00">カウンタ</th>
+<th nowrap bgcolor="#00ff00">最終アクセス時間</th>
+<th nowrap bgcolor="#00ff00">本日</th>
+<th nowrap bgcolor="#00ff00">昨日</th>
+<th nowrap bgcolor="#00ff00" WIDTH=150>グラフ</th></tr>
+HTML
+
+opendir(DI,"$mkbo") || die"error\n";
+@fil = readdir(DI);
+closedir(DI);
+
+foreach $lin (@fil){
+
+if($lin !~ /(.*)\.txt$/){next;}
+
+if(!open(IN,"${mkbo}/${1}.txt")){$messe = '読み込みファイルをオープン出来ません';&keikoku;}
+$ti = <IN>;
+close(IN);chop($ti);
+($counta3,$countb3,$counter,$time3,$year3,$mon3,$day3,$wday3,$hour3,$min3) = split(/\,/,$ti);
+if($day3 != $day){$counta1 = 0; $countb1 = $counta3;}else{$counta1 = $counta3;$countb1 = $countb3;}
+if($mon3 eq ''){$counta1 = 0;$countb1 = 0;$mon3 = '--';$day3 = '--';$wday3 = '--';$hour3 = '--';$min3 = '--';}
+if($counter eq ''){$counter = 0;}
+
+$counta1a{$1} = $counta1;
+$countb1a{$1} = $countb1;
+$countera{$1} = $counter;
+$timea{$1} = $time3;
+$days = "$mon3月$day3日($wday3)$hour3時$min3分";
+$daya{$1} = $days;
+
+}
+
+$lineno = 1;
+foreach (sort {$counta1a{$b} <=> $counta1a{$a};} keys(%counta1a)){
+
+if($lineno == 1){$y = $counta1a{$_};}
+if($y == 0){$y = 1;}
+$yy = int (($counta1a{$_}*150) / $y);
+if($yy < 1){$yy = 1;}
+
+if($timea{$_} < $time-2*24*60*60){$counta1a{$_} = 'not';$countb1a{$_} = 'not';}
+
+print <<HTML;
+<tr><td nowrap bgcolor="#ffb6c1"><a href="$FORMA{$_}" target="_top"><font size="2">$FORMA{$_}</font></a></td>
+<td nowrap bgcolor="#ffb6c1" align="center">$countera{$_}</td>
+<td nowrap bgcolor="#ffb6c1">$daya{$_}</td>
+<td nowrap bgcolor="#ffb6c1" align="center">$counta1a{$_}</td>
+<td nowrap bgcolor="#ffb6c1" align="center">$countb1a{$_}</td>
+HTML
+
+if($lineno == 1){
+print "<td nowrap bgcolor=\"#7777aa\" WIDTH=150><IMG SRC=\"$gif\" HEIGHT=10 WIDTH=150></td></tr>\n";
+}else{
+print "<td nowrap bgcolor=\"#7777aa\" WIDTH=150><IMG SRC=\"$gif\" HEIGHT=10 WIDTH=$yy></td></tr>\n";
+     }
+
+$lineno++;
+
+ }
+
+print "</table><hr noshade><h4 align=right><a href=\"http://www2a.biglobe.ne.jp/~yama/\" target=\"_top\">Log V1.0</a></h4>\n";
+print "<!--上のURLは、削除しないで下さい。-->\n"; 
+print "<p><br></body></html>\n";
+
+}elsif($FORM{'k'} eq "$key" && $FORM{'a'} ne ''){
+
+open(INN,"${mkbo}/$FORM{'a'}.txt") || die "Can't Open Count Data File\n";
+$tim = <INN>;
+close(INN);
+chop($tim);
+
+($counta,$countb,$counter,$time2,$year2,$mon2,$day2,$wday2,$hour2,$min2) = split(/\,/,$tim);
+
+if($day2 != $day){$count = 0;$count2 = $counta;}else{$count = $counta;$count2 = $countb;}
+if($count eq ''){$count = 0;}if($count2 eq ''){$count2 = 0;}
+if($counter > 900000 ){$counter = '1';}else{$counter++;}
+$count++;
+
+open(OUT,">${mkbo}/temp$$") || die "Can't Open Count Data File\n";
+chmod 0666, "${mkbo}/temp$$";
+
+print OUT "$count\,$count2\,$counter\,$time\,$year\,$mon\,$day\,$wday\,$hour\,$min\n";
+
+close(OUT);
+rename("${mkbo}/temp$$","${mkbo}/$FORM{'a'}.txt");
+
+open(IMG,"$gif") || die "Can't Open Count Data File\n";
+@gif = stat("$gif");
+$byte = $gif[7];
+print "Content-type: image/gif\n";
+print "Content-length: $byte\n\n";
+print <IMG>;
+close(IMG);
+
+
+}
+
+
+#########
+sub dec {
+if ($ENV{'REQUEST_METHOD'} eq "POST") { read(STDIN, $buffer, $ENV{'CONTENT_LENGTH'}); }
+else { $buffer = $ENV{'QUERY_STRING'}; }
+
+@pairs = split(/&/,$buffer);
+foreach $pair (@pairs) {
+	($name, $value) = split(/=/, $pair);
+	$value =~ tr/+/ /;
+	$value =~ s/%([a-fA-F0-9][a-fA-F0-9])/pack("C", hex($1))/eg;
+        $FORM{$name} = $value;
+   }
+
+}
+##########
+sub jikan {
+$time = time;
+ ( $sec,$min,$hour,$day,$mon,$year,$wday ) = localtime($time);
+    $mon++;
+                if ($year < 10)  { $year = "0$year";}
+		if ($sec < 10)  { $sec = "0$sec";}
+		if ($min < 10)  { $min = "0$min";}
+		if ($hour < 10) { $hour = "0$hour";}
+		if ($day < 10)  { $day = "0$day";}
+$wday = ('日','月','火','水','木','金','土')[$wday];  
+
+}
+
+##########
+sub keikoku {
+
+print "Content-type: text/html\n\n"; 
+print "<html><head><title>WWW</title></head>\n";
+print "<body bgcolor=\"ffffff\" text=\"000000\" link=\"0000ff\" vlink=\"0000ff\">\n";
+print "<br><br><p><center><b>$messe</b></center></body></html>\n";exit;
+}
+########
+
+
+
