@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bridgy Communication — 筆談・翻訳コミュニケーションアプリ</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;700;900&family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap');
+
+  :root {
+    --cream: #f5f0e8;
+    --dark: #1a1a2e;
+    --blue: #2563eb;
+    --blue-light: #60a5fa;
+    --teal: #0d9488;
+    --warm: #f59e0b;
+    --soft-gray: #f8f6f2;
+    --text: #2d2d2d;
+    --text-muted: #6b7280;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Noto Sans JP', 'DM Sans', sans-serif;
+    background: var(--soft-gray);
+    color: var(--text);
+    overflow-x: hidden;
+  }
+
+  /* ===== LANGUAGE TOGGLE ===== */
+  .lang-bar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    background: rgba(26,26,46,0.95);
+    backdrop-filter: blur(10px);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 32px;
+  }
+  .lang-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    color: #fff;
+    letter-spacing: 0.05em;
+  }
+  .lang-logo span { color: var(--blue-light); }
+  .lang-btns { display: flex; gap: 8px; }
+  .lang-btn {
+    padding: 6px 18px;
+    border-radius: 20px;
+    border: 1.5px solid rgba(255,255,255,0.3);
+    background: transparent;
+    color: rgba(255,255,255,0.7);
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+  }
+  .lang-btn.active {
+    background: var(--blue);
+    border-color: var(--blue);
+    color: #fff;
+  }
+
+  /* ===== HERO ===== */
+  .hero {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 100px 24px 60px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(37,99,235,0.15) 0%, transparent 70%);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+  .hero-badge {
+    display: inline-block;
+    background: rgba(37,99,235,0.2);
+    border: 1px solid rgba(96,165,250,0.4);
+    color: var(--blue-light);
+    font-size: 0.8rem;
+    letter-spacing: 0.15em;
+    padding: 6px 20px;
+    border-radius: 20px;
+    margin-bottom: 28px;
+    text-transform: uppercase;
+  }
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.8rem, 7vw, 5.5rem);
+    color: #fff;
+    line-height: 1.1;
+    margin-bottom: 20px;
+    font-weight: 900;
+  }
+  .hero h1 .accent { color: var(--blue-light); }
+  .hero-sub {
+    font-size: clamp(1rem, 2.5vw, 1.25rem);
+    color: rgba(255,255,255,0.7);
+    max-width: 600px;
+    margin: 0 auto 20px;
+    line-height: 1.7;
+    font-weight: 300;
+  }
+  .hero-sub-en { display: none; }
+  .hero-features {
+    display: flex;
+    gap: 24px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: 36px 0;
+  }
+  .hero-feat {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: rgba(255,255,255,0.8);
+    font-size: 0.9rem;
+  }
+  .hero-feat .dot {
+    width: 8px; height: 8px;
+    background: var(--blue-light);
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .hero-cta {
+    display: inline-block;
+    background: var(--blue);
+    color: #fff;
+    padding: 16px 48px;
+    border-radius: 50px;
+    font-size: 1.05rem;
+    font-weight: 700;
+    text-decoration: none;
+    margin-top: 12px;
+    transition: all 0.3s;
+    box-shadow: 0 8px 32px rgba(37,99,235,0.4);
+  }
+  .hero-cta:hover {
+    background: #1d4ed8;
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(37,99,235,0.5);
+  }
+  .hero-cta.coming-soon {
+    background: rgba(255,255,255,0.1);
+    border: 1.5px solid rgba(255,255,255,0.3);
+    box-shadow: none;
+  }
+  .hero-price {
+    margin-top: 16px;
+    color: rgba(255,255,255,0.5);
+    font-size: 0.85rem;
+  }
+
+  /* ===== SECTION ===== */
+  section {
+    padding: 80px 24px;
+  }
+  .section-label {
+    text-align: center;
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--blue);
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+  .section-title {
+    text-align: center;
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    color: var(--dark);
+    margin-bottom: 16px;
+    line-height: 1.2;
+  }
+  .section-desc {
+    text-align: center;
+    color: var(--text-muted);
+    max-width: 560px;
+    margin: 0 auto 56px;
+    line-height: 1.8;
+    font-size: 0.95rem;
+  }
+
+  /* ===== SCREENSHOTS GRID ===== */
+  .screenshots-section { background: var(--soft-gray); }
+  .screenshots-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 24px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  .shot-card {
+    background: #fff;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.07);
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+  .shot-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+  }
+  .shot-card img {
+    width: 100%;
+    display: block;
+    object-fit: cover;
+  }
+  .shot-card .shot-label {
+    padding: 14px 18px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--dark);
+    border-top: 1px solid #f0f0f0;
+  }
+
+  /* ===== FEATURES LIST ===== */
+  .features-section { background: var(--dark); }
+  .features-section .section-title { color: #fff; }
+  .features-section .section-desc { color: rgba(255,255,255,0.5); }
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 20px;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+  .feat-card {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
+    padding: 28px 24px;
+    transition: background 0.3s;
+  }
+  .feat-card:hover { background: rgba(255,255,255,0.08); }
+  .feat-icon {
+    font-size: 2rem;
+    margin-bottom: 14px;
+  }
+  .feat-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 8px;
+  }
+  .feat-desc {
+    font-size: 0.85rem;
+    color: rgba(255,255,255,0.5);
+    line-height: 1.7;
+  }
+
+  /* ===== PRIVACY SECTION ===== */
+  .privacy-section { background: #fff; }
+  .privacy-cards {
+    display: flex;
+    gap: 24px;
+    justify-content: center;
+    flex-wrap: wrap;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .privacy-card {
+    flex: 1;
+    min-width: 220px;
+    max-width: 280px;
+    background: var(--soft-gray);
+    border-radius: 20px;
+    padding: 32px 24px;
+    text-align: center;
+  }
+  .privacy-card .p-icon { font-size: 2.5rem; margin-bottom: 16px; }
+  .privacy-card .p-title {
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--dark);
+    margin-bottom: 8px;
+  }
+  .privacy-card .p-desc {
+    font-size: 0.83rem;
+    color: var(--text-muted);
+    line-height: 1.7;
+  }
+
+  /* ===== CTA SECTION ===== */
+  .cta-section {
+    background: linear-gradient(135deg, #1a1a2e, #0f3460);
+    text-align: center;
+    padding: 100px 24px;
+  }
+  .cta-section .section-title { color: #fff; margin-bottom: 16px; }
+  .cta-section .section-desc { color: rgba(255,255,255,0.6); margin-bottom: 40px; }
+
+  /* ===== FOOTER ===== */
+  footer {
+    background: #111;
+    color: rgba(255,255,255,0.4);
+    text-align: center;
+    padding: 32px 24px;
+    font-size: 0.82rem;
+    line-height: 1.8;
+  }
+  footer a { color: var(--blue-light); text-decoration: none; }
+
+  /* ===== LANG SWITCHING ===== */
+  .ja { display: block; }
+  .en { display: none; }
+  body.lang-en .ja { display: none; }
+  body.lang-en .en { display: block; }
+  body.lang-en .hero-sub-en { display: block; }
+  body.lang-en .hero-sub-ja { display: none; }
+
+  /* inline elements */
+  span.ja, span.en { display: inline; }
+  body.lang-en span.ja { display: none; }
+  body.lang-ja span.en { display: none; }
+
+  /* screenshot sets */
+  .shots-ja { display: grid; }
+  .shots-en { display: none; }
+  body.lang-en .shots-ja { display: none; }
+  body.lang-en .shots-en { display: grid; }
+
+  /* ===== ANIMATIONS ===== */
+  .fade-in {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .fade-in.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  @media (max-width: 600px) {
+    .lang-bar { padding: 10px 16px; }
+    .lang-logo { font-size: 1.1rem; }
+    .screenshots-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+    .shot-card .shot-label { font-size: 0.75rem; padding: 10px 12px; }
+  }
+</style>
+</head>
+<body class="lang-ja">
+
+<!-- LANGUAGE BAR -->
+<nav class="lang-bar">
+  <div class="lang-logo">Bridgy <span>Communication</span></div>
+  <div class="lang-btns">
+    <button class="lang-btn active" onclick="setLang('ja')">日本語</button>
+    <button class="lang-btn" onclick="setLang('en')">English</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div>
+    <div class="hero-badge">
+      <span class="ja">iPad 専用コミュニケーションアプリ</span>
+      <span class="en">iPad Communication App</span>
+    </div>
+    <h1>
+      <span class="ja">文字で、<br><span class="accent">つながる。</span></span>
+      <span class="en">Connect Through<br><span class="accent">Writing.</span></span>
+    </h1>
+    <p class="hero-sub hero-sub-ja">
+      声が届かないとき、言葉が通じないとき。<br>
+      Bridgyは筆談・翻訳・音声で、あなたと相手の橋渡しをします。
+    </p>
+    <p class="hero-sub hero-sub-en">
+      When words don't reach — through noise, language barriers, or hearing loss.<br>
+      Bridgy bridges the gap with handwriting, translation, and voice.
+    </p>
+    <div class="hero-features">
+      <div class="hero-feat"><div class="dot"></div><span class="ja">6言語・66ペア翻訳</span><span class="en">6 Languages · 66 Pairs</span></div>
+      <div class="hero-feat"><div class="dot"></div><span class="ja">オフライン対応</span><span class="en">Offline Translation</span></div>
+      <div class="hero-feat"><div class="dot"></div><span class="ja">広告なし</span><span class="en">No Ads</span></div>
+      <div class="hero-feat"><div class="dot"></div><span class="ja">データ収集なし</span><span class="en">No Data Collection</span></div>
+    </div>
+    <a href="#" class="hero-cta coming-soon">
+      <span class="ja">🍎 App Store — 準備中</span>
+      <span class="en">🍎 App Store — Coming Soon</span>
+    </a>
+    <p class="hero-price">
+      <span class="ja">¥300 買い切り・10日間無料トライアル</span>
+      <span class="en">$1.99 one-time · 10-day free trial</span>
+    </p>
+  </div>
+</section>
+
+<!-- SCREENSHOTS JA -->
+<section class="screenshots-section">
+  <p class="section-label"><span class="ja">スクリーンショット</span><span class="en">Screenshots</span></p>
+  <h2 class="section-title">
+    <span class="ja">アプリの機能をご覧ください</span>
+    <span class="en">See Bridgy in Action</span>
+  </h2>
+  <p class="section-desc">
+    <span class="ja">iPad の画面を上下2分割し、向かい合った相手にも文字が読みやすく表示されます。</span>
+    <span class="en">The iPad screen splits into two halves — one for you, one for your partner, each easy to read.</span>
+  </p>
+
+  <!-- Japanese screenshots -->
+  <div class="screenshots-grid shots-ja fade-in">
+    <div class="shot-card">
+      <img src="images/ja_01_handwriting.png" alt="筆談">
+      <div class="shot-label">筆談で、伝え合える</div>
+    </div>
+    <div class="shot-card">
+      <img src="images/ja_02_offline.png" alt="オフライン翻訳">
+      <div class="shot-label">オフライン翻訳</div>
+    </div>
+    <div class="shot-card">
+      <img src="images/ja_03_translation6.png" alt="6言語翻訳">
+      <div class="shot-label">6言語・66ペア翻訳</div>
+    </div>
+    <div class="shot-card">
+      <img src="images/ja_04_kindness.png" alt="やさしく会話">
+      <div class="shot-label">文字で、やさしく会話</div>
+    </div>
+    <div class="shot-card">
+      <img src="images/ja_05_splitscreen2.png" alt="画面2分割">
+      <div class="shot-label">画面2分割で相手にも見やすい</div>
+    </div>
+    <div class="shot-card">
+      <img src="images/ja_06_drawing.png" alt="お絵描き">
+      <div class="shot-label">お絵描きも楽しめる</div>
+    </div>
+    <div class="shot-card">
+      <img src="images/ja_07_dictionary.png" alt="辞書登録">
+      <div class="shot-label">辞書登録で定型文を瞬時に表示</div>
+    </div>
+    <div class="shot-card">
+      <img src="images/ja_08_privacy.png" alt="プライバシー">
+      <div class="shot-label">広告なし・データ収集なし</div>
+    </div>
+    <div class="shot-card">
+      <img src="images/ja_09_input.png" alt="多様な入力">
+      <div class="shot-label">手書き・キーボード・音声・Apple Pencil</div>
+    </div>
+    <div class="shot-card">
+      <img src="images/ja_10_splitscreen.png" alt="画面分割2">
+      <div class="shot-label">翻訳文を音声で読み上げ</div>
+    </div>
+  </div>
+
+  <!-- English screenshots -->
+  <div class="screenshots-grid shots-en fade-in">
+    <div class="shot-card">
+      <img src="images/en_01_facetoface.png" alt="Face to Face">
+      <div class="shot-label">Communicate Face-to-Face by Writing</div>
+    </div>
+    <div class="shot-card">
+      <img src="images/en_02_translation.png" alt="6 Languages">
+      <div class="shot-label">Translate in 6 Languages</div>
+    </div>
+    <div class="shot-card">
+      <img src="images/en_03_kindness.png" alt="Kindness">
+      <div class="shot-label">Communicate with Kindness</div>
+    </div>
+    <div class="shot-card">
+      <img src="images/en_04_offline.png" alt="Offline">
+      <div class="shot-label">Offline Translation</div>
+    </div>
+    <div class="shot-card">
+      <img src="images/en_05_input.png" alt="Multiple Input">
+      <div class="shot-label">Supports Multiple Input Methods</div>
+    </div>
+    <div class="shot-card">
+      <img src="images/en_06_privacy.png" alt="Privacy">
+      <div class="shot-label">No Ads · Your data never leaves your device</div>
+    </div>
+    <div class="shot-card">
+      <img src="images/en_07_drawing.png" alt="Drawing">
+      <div class="shot-label">Handwrite & Draw</div>
+    </div>
+    <div class="shot-card">
+      <img src="images/en_08_splitscreen.png" alt="Split Screen">
+      <div class="shot-label">Split-Screen Display</div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features-section">
+  <p class="section-label"><span class="ja">主な機能</span><span class="en">Key Features</span></p>
+  <h2 class="section-title">
+    <span class="ja">Bridgyができること</span>
+    <span class="en">What Bridgy Can Do</span>
+  </h2>
+  <p class="section-desc">
+    <span class="ja">14年間の傾聴ボランティア活動から生まれたアプリです。</span>
+    <span class="en">Born from 14 years of listening volunteer work.</span>
+  </p>
+  <div class="features-grid fade-in">
+    <div class="feat-card">
+      <div class="feat-icon">✍️</div>
+      <div class="feat-title"><span class="ja">筆談・手書き</span><span class="en">Handwriting</span></div>
+      <div class="feat-desc"><span class="ja">指またはApple Pencilで画面に直接書き込み。相手側には180度回転して表示されます。</span><span class="en">Write directly on screen with your finger or Apple Pencil. The partner sees it rotated 180°.</span></div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">🌐</div>
+      <div class="feat-title"><span class="ja">6言語・66ペア翻訳</span><span class="en">6 Languages · 66 Pairs</span></div>
+      <div class="feat-desc"><span class="ja">日本語・英語・フランス語・スペイン語・イタリア語・ベトナム語に対応。</span><span class="en">Japanese, English, French, Spanish, Italian, Vietnamese — all combinations supported.</span></div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">📵</div>
+      <div class="feat-title"><span class="ja">オフライン翻訳</span><span class="en">Offline Translation</span></div>
+      <div class="feat-desc"><span class="ja">言語データをダウンロード後はインターネット不要で翻訳できます。</span><span class="en">After downloading language data, translate without any internet connection.</span></div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">🎙️</div>
+      <div class="feat-title"><span class="ja">音声入力・読み上げ</span><span class="en">Voice Input & Read Aloud</span></div>
+      <div class="feat-desc"><span class="ja">音声を文字に変換して表示。翻訳後の文章を音声で読み上げることもできます。</span><span class="en">Convert speech to text and display it. Also reads translated text aloud.</span></div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">⌨️</div>
+      <div class="feat-title"><span class="ja">多様な入力方法</span><span class="en">Multiple Input Methods</span></div>
+      <div class="feat-desc"><span class="ja">手書き・キーボード・音声・Apple Pencilに対応。辞書登録で定型文も瞬時に表示。</span><span class="en">Handwriting, keyboard, voice, and Apple Pencil. Register phrases for instant display.</span></div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">📱</div>
+      <div class="feat-title"><span class="ja">画面2分割表示</span><span class="en">Split-Screen Display</span></div>
+      <div class="feat-desc"><span class="ja">上下に分割し、向かい合った相手にも大きな文字で見やすく表示されます。</span><span class="en">Split into top and bottom — large, clear text easy for both sides to read face-to-face.</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- PRIVACY -->
+<section class="privacy-section">
+  <p class="section-label"><span class="ja">安心・安全</span><span class="en">Privacy & Trust</span></p>
+  <h2 class="section-title">
+    <span class="ja">プライバシーを大切に</span>
+    <span class="en">Your Privacy Matters</span>
+  </h2>
+  <p class="section-desc">
+    <span class="ja">個人開発者が、利用者のプライバシーを守ることを最優先に開発しました。</span>
+    <span class="en">Built by a solo indie developer who puts your privacy first.</span>
+  </p>
+  <div class="privacy-cards fade-in">
+    <div class="privacy-card">
+      <div class="p-icon">🚫</div>
+      <div class="p-title"><span class="ja">広告なし</span><span class="en">No Ads</span></div>
+      <div class="p-desc"><span class="ja">一切の広告を表示しません。</span><span class="en">Completely ad-free experience.</span></div>
+    </div>
+    <div class="privacy-card">
+      <div class="p-icon">🔒</div>
+      <div class="p-title"><span class="ja">データ収集なし</span><span class="en">No Data Collection</span></div>
+      <div class="p-desc"><span class="ja">入力された情報は収集しません。会話はデバイスの外に出ません。</span><span class="en">No data is collected. Your conversations never leave your device.</span></div>
+    </div>
+    <div class="privacy-card">
+      <div class="p-icon">📶</div>
+      <div class="p-title"><span class="ja">オフライン対応</span><span class="en">Works Offline</span></div>
+      <div class="p-desc"><span class="ja">言語ダウンロード後はネット不要。どこでも使えます。</span><span class="en">After language download, works anywhere without internet.</span></div>
+    </div>
+    <div class="privacy-card">
+      <div class="p-icon">💴</div>
+      <div class="p-title"><span class="ja">買い切り</span><span class="en">One-Time Purchase</span></div>
+      <div class="p-desc"><span class="ja">¥300の買い切り。サブスクなし。10日間無料トライアルあり。</span><span class="en">$1.99 one-time. No subscription. 10-day free trial.</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <h2 class="section-title">
+    <span class="ja">Bridgyを試してみませんか</span>
+    <span class="en">Try Bridgy Today</span>
+  </h2>
+  <p class="section-desc">
+    <span class="ja">10日間の無料トライアルでお試しいただけます。<br>推奨環境：iPadOS 18以上、Apple Pencil（オプション）</span>
+    <span class="en">Start with a 10-day free trial.<br>Recommended: iPadOS 18 or later, Apple Pencil (optional)</span>
+  </p>
+  <a href="#" class="hero-cta coming-soon">
+    <span class="ja">🍎 App Store — 準備中</span>
+    <span class="en">🍎 App Store — Coming Soon</span>
+  </a>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>© 2025 Akio. Bridgy Communication. All rights reserved.</p>
+  <p style="margin-top:8px;">
+    <a href="index.html"><span class="ja">← ホームページへ戻る</span><span class="en">← Back to Homepage</span></a>
+  </p>
+</footer>
+
+<script>
+  function setLang(lang) {
+    document.body.className = 'lang-' + lang;
+    document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelector('.lang-btn[onclick="setLang(\'' + lang + '\')"]').classList.add('active');
+    document.documentElement.lang = lang;
+  }
+
+  // Scroll fade-in
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
