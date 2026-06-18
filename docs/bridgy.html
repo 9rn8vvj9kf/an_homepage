@@ -297,6 +297,21 @@
     line-height: 1.7;
   }
 
+  /* ===== QR CODE ===== */
+  .qr-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-top: 24px;
+  }
+  .qr-wrap canvas, .qr-wrap img { border-radius: 12px; background: #fff; padding: 8px; }
+  .qr-caption {
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.6);
+    letter-spacing: 0.05em;
+  }
+
   /* ===== CTA SECTION ===== */
   .cta-section {
     background: linear-gradient(135deg, #1a1a2e, #0f3460);
@@ -374,31 +389,33 @@
       <span class="en">iPad Communication App</span>
     </div>
     <h1>
-      <span class="ja">文字で、<br><span class="accent">つながる。</span></span>
-      <span class="en">Connect Through<br><span class="accent">Writing.</span></span>
+      <span class="ja">タブレット または スマートホンを<br>対面に置き、<br><span class="accent">会話を支援するアプリです</span></span>
+      <span class="en">Place your tablet or smartphone<br>face-to-face and<br><span class="accent">start communicating.</span></span>
     </h1>
     <p class="hero-sub hero-sub-ja">
-      声を出せない環境下、聴覚に問題がある方、高齢で難聴の方、外国語の言葉が話せないとき。<br>
-      Bridgyは筆談・自動翻訳・翻訳後の言葉をナチュラルな音声で、あなたと相手のコミュニケーションの橋渡しをします。
+      Bridgy Communicationアプリは、リアルタイム翻訳、音声認識、テキスト読み上げ、手書き入力を組み合わせた会話支援ツールであり、言語やコミュニケーションに課題を持つ人々が自信を持って対話できるように設計されています。特に、言語の壁、聴覚障害を抱える人々に対し、双方向のコミュニケーションを円滑にするための多様な機能を提供しています。個人情報を収集せず、オフライン翻訳が可能です。プライバシー保護を最重要した制度設計で開発しています。
     </p>
     <p class="hero-sub hero-sub-en">
-      When words don't reach — through noise, language barriers, or hearing loss.<br>
-      Bridgy bridges the gap with handwriting, translation, and voice.
+      Bridgy Communication combines real-time translation, speech recognition, text-to-speech, and handwriting input — designed to help people with language barriers or hearing difficulties communicate with confidence. No data collection, offline translation available, privacy-first by design.
     </p>
     <div class="hero-features">
-      <div class="hero-feat"><div class="dot"></div><span class="ja">6言語・66ペア翻訳</span><span class="en">6 Languages · 66 Pairs</span></div>
+      <div class="hero-feat"><div class="dot"></div><span class="ja">7言語・49ペア翻訳</span><span class="en">7 Languages · 49 Pairs</span></div>
       <div class="hero-feat"><div class="dot"></div><span class="ja">オフライン対応</span><span class="en">Offline Translation</span></div>
       <div class="hero-feat"><div class="dot"></div><span class="ja">広告なし</span><span class="en">No Ads</span></div>
       <div class="hero-feat"><div class="dot"></div><span class="ja">データ収集なし</span><span class="en">No Data Collection</span></div>
     </div>
-    <a href="#" class="hero-cta coming-soon">
-      <span class="ja">🍎 App Store — 準備中</span>
-      <span class="en">🍎 App Store — Coming Soon</span>
+    <a href="https://apps.apple.com/app/bridgy/id6757919531" class="hero-cta" target="_blank">
+      <span class="ja">🍎 App Store で入手</span>
+      <span class="en">🍎 Download on the App Store</span>
     </a>
     <p class="hero-price">
       <span class="ja">¥300 買い切り・10日間無料トライアル</span>
       <span class="en">$1.99 one-time · 10-day free trial</span>
     </p>
+    <div class="qr-wrap">
+      <div id="qr-hero"></div>
+      <span class="qr-caption"><span class="ja">QRコードでApp Storeへ</span><span class="en">Scan to open App Store</span></span>
+    </div>
   </div>
 </section>
 
@@ -425,8 +442,8 @@
       <div class="shot-label">オフライン翻訳</div>
     </div>
     <div class="shot-card">
-      <img src="images/ja_03_translation6.png" alt="6言語翻訳">
-      <div class="shot-label">6言語・66ペア翻訳</div>
+      <img src="images/ja_03_translation6.png" alt="7言語翻訳">
+      <div class="shot-label">7言語翻訳・49言語ペアーで会話</div>
     </div>
     <div class="shot-card">
       <img src="images/ja_04_kindness.png" alt="やさしく会話">
@@ -466,7 +483,7 @@
     </div>
     <div class="shot-card">
       <img src="images/en_02_translation.png" alt="6 Languages">
-      <div class="shot-label">Translate in 6 Languages</div>
+      <div class="shot-label">Translate in 7 Languages · 49 Pairs</div>
     </div>
     <div class="shot-card">
       <img src="images/en_03_kindness.png" alt="Kindness">
@@ -514,8 +531,8 @@
     </div>
     <div class="feat-card">
       <div class="feat-icon">🌐</div>
-      <div class="feat-title"><span class="ja">6言語・66ペア翻訳</span><span class="en">6 Languages · 66 Pairs</span></div>
-      <div class="feat-desc"><span class="ja">日本語・英語・フランス語・スペイン語・イタリア語・ベトナム語に対応。</span><span class="en">Japanese, English, French, Spanish, Italian, Vietnamese — all combinations supported.</span></div>
+      <div class="feat-title"><span class="ja">7言語・49ペア翻訳</span><span class="en">7 Languages · 49 Pairs</span></div>
+      <div class="feat-desc"><span class="ja">日本語・英語・フランス語・スペイン語・イタリア語・ベトナム語・インドネシア語に対応。</span><span class="en">Japanese, English, French, Spanish, Italian, Vietnamese, Indonesian — all combinations supported.</span></div>
     </div>
     <div class="feat-card">
       <div class="feat-icon">📵</div>
@@ -585,10 +602,17 @@
     <span class="ja">10日間の無料トライアルでお試しいただけます。<br>推奨環境：iPadOS 18以上、Apple Pencil（オプション）</span>
     <span class="en">Start with a 10-day free trial.<br>Recommended: iPadOS 18 or later, Apple Pencil (optional)</span>
   </p>
-  <a href="#" class="hero-cta coming-soon">
-    <span class="ja">🍎 App Store — 準備中</span>
-    <span class="en">🍎 App Store — Coming Soon</span>
+  <a href="https://apps.apple.com/app/bridgy/id6757919531" class="hero-cta" target="_blank">
+    <span class="ja">🍎 App Store で配信中</span>
+    <span class="en">🍎 Download on the App Store</span>
   </a>
+  <div class="qr-wrap" style="margin-top:28px;">
+    <div id="qr-cta"></div>
+    <span class="qr-caption" style="color:rgba(255,255,255,0.5);">
+      <span class="ja">QRコードでApp Storeへ</span>
+      <span class="en">Scan to open App Store</span>
+    </span>
+  </div>
 </section>
 
 <!-- FOOTER -->
@@ -599,7 +623,26 @@
   </p>
 </footer>
 
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 <script>
+  const APP_STORE_URL = 'https://apps.apple.com/app/bridgy/id6757919531';
+
+  function makeQR(id) {
+    new QRCode(document.getElementById(id), {
+      text: APP_STORE_URL,
+      width: 140,
+      height: 140,
+      colorDark: '#1a1a2e',
+      colorLight: '#ffffff',
+      correctLevel: QRCode.CorrectLevel.M
+    });
+  }
+
+  window.addEventListener('load', function() {
+    makeQR('qr-hero');
+    makeQR('qr-cta');
+  });
+
   function setLang(lang) {
     document.body.className = 'lang-' + lang;
     document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
